@@ -11,16 +11,18 @@
   body { font-family: 'Montserrat', sans-serif; background: linear-gradient(180deg, #87ceeb 0%, #f4a261 40%, #e76f51 70%, #2a9d8f 100%); min-height: 100vh; color: var(--deep); }
   .invite-container { max-width: 480px; margin: 20px auto; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid rgba(212,175,55,0.4); }
   .invitation-img { width: 100%; display: block; }
-  .rsvp-section, .host-section { background: rgba(255,255,255,0.95); margin: 0; padding: 25px; }
+  .rsvp-section, .host-section, .comment-section { background: rgba(255,255,255,0.95); margin: 0; padding: 25px; }
   h2 { font-family: 'Playfair Display', serif; text-align: center; color: var(--gold); margin-bottom: 15px; }
   label { display: block; margin: 12px 0 4px; font-size: 13px; }
-  input, select { width: 100%; padding: 12px; border: 1px solid #e0d0b0; border-radius: 8px; font-size: 15px; }
+  input, select, textarea { width: 100%; padding: 12px; border: 1px solid #e0d0b0; border-radius: 8px; font-size: 15px; font-family: inherit; }
+  textarea { min-height: 80px; resize: vertical; }
   button { width: 100%; margin-top: 18px; padding: 14px; background: linear-gradient(135deg, var(--gold), #b8962e); color: white; border: none; border-radius: 30px; font-size: 15px; cursor: pointer; }
   .success { text-align: center; color: #2d6a4f; padding: 15px; background: #d8f3dc; border-radius: 8px; margin-top: 10px; }
   .count-display { text-align: center; font-size: 18px; margin: 15px 0; padding: 15px; background: var(--cream); border-radius: 12px; }
   .count-display .big { font-family: 'Playfair Display', serif; font-size: 42px; color: var(--gold); display: block; }
-  .guest-list { max-height: 220px; overflow-y: auto; font-size: 13px; margin-top: 10px; }
-  .guest-list div { padding: 6px 0; border-bottom: 1px solid #f0e6d6; }
+  .guest-list, .comment-list { max-height: 220px; overflow-y: auto; font-size: 13px; margin-top: 10px; }
+  .guest-list div, .comment-list div { padding: 8px 0; border-bottom: 1px solid #f0e6d6; }
+  .comment-list .who { font-weight: 600; color: var(--gold); }
   footer { text-align: center; padding: 20px; font-size: 12px; color: #8b7355; background: #fff; }
   .host-toggle { text-align: center; margin: 15px 0; }
   .host-toggle a { color: var(--gold); font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--gold); }
@@ -43,23 +45,41 @@
     </form>
     <div id="formMessage"></div>
   </div>
+  <div class="comment-section" id="commentSection" style="display:none;">
+    <h2>Leave a Message</h2>
+    <form id="commentForm">
+      <label>Your Name</label>
+      <input type="text" id="commentName" required placeholder="Your name">
+      <label>Message</label>
+      <textarea id="commentText" required placeholder="Write a note for Jessica & Andre..."></textarea>
+      <button type="submit">Post Message</button>
+    </form>
+    <div id="commentMessage"></div>
+    <h3 style="font-size:16px; margin:20px 0 8px;">Messages</h3>
+    <div class="comment-list" id="commentList"></div>
+  </div>
   <div class="host-section" id="hostSection" style="display:none;">
     <h2>Host Dashboard</h2>
     <div class="count-display"><span class="big" id="totalAttending">0</span>attending of 30 maximum</div>
     <div id="spotsLeft" style="text-align:center; margin-bottom:15px;"></div>
     <h3 style="font-size:16px; margin:15px 0 8px;">Guest List</h3>
     <div class="guest-list" id="guestList"></div>
-    <button onclick="clearAll()" style="background:#9b2226; margin-top:15px;">Reset All RSVPs</button>
+    <h3 style="font-size:16px; margin:20px 0 8px;">Messages</h3>
+    <div class="comment-list" id="hostCommentList"></div>
+    <button onclick="clearAll()" style="background:#9b2226; margin-top:15px;">Reset All RSVPs & Messages</button>
   </div>
   <div class="host-toggle"><a href="#" onclick="toggleHost(); return false;">Host View</a></div>
   <footer>Jessica & Andre • July 25, 2027 • Sky Beach, Hanover</footer>
 </div>
 <script>
 const MAX_GUESTS = 30;
-const STORAGE_KEY = 'jessicaAndreWeddingRSVP';
+const RSVP_KEY = 'jessicaAndreWeddingRSVP';
+const COMMENT_KEY = 'jessicaAndreWeddingComments';
 const HOST_PASSWORD = 'wedding2027';
-function loadRSVPs() { const data = localStorage.getItem(STORAGE_KEY); return data ? JSON.parse(data) : []; }
-function saveRSVPs(list) { localStorage.setItem(STORAGE_KEY, JSON.stringify(list)); }
+function loadRSVPs() { const d = localStorage.getItem(RSVP_KEY); return d ? JSON.parse(d) : []; }
+function saveRSVPs(list) { localStorage.setItem(RSVP_KEY, JSON.stringify(list)); }
+function loadComments() { const d = localStorage.getItem(COMMENT_KEY); return d ? JSON.parse(d) : []; }
+function saveComments(list) { localStorage.setItem(COMMENT_KEY, JSON.stringify(list)); }
 function getTotal() { return loadRSVPs().reduce((sum, g) => sum + g.count, 0); }
 function updateHostView() {
   const list = loadRSVPs();
@@ -67,8 +87,13 @@ function updateHostView() {
   document.getElementById('totalAttending').textContent = total;
   const left = MAX_GUESTS - total;
   document.getElementById('spotsLeft').innerHTML = left > 0 ? '<span style="color:#2d6a4f;">' + left + ' spots remaining</span>' : '<span style="color:#9b2226;">Event is full</span>';
-  const listEl = document.getElementById('guestList');
-  listEl.innerHTML = list.length === 0 ? '<div style="text-align:center; color:#999;">No RSVPs yet</div>' : list.map(g => '<div><strong>' + g.name + '</strong> — ' + g.count + ' guest' + (g.count>1?'s':'') + (g.phone ? ' • ' + g.phone : '') + '</div>').join('');
+  document.getElementById('guestList').innerHTML = list.length === 0 ? '<div style="text-align:center;color:#999;">No RSVPs yet</div>' : list.map(g => '<div><strong>' + g.name + '</strong> — ' + g.count + ' guest' + (g.count>1?'s':'') + (g.phone ? ' • ' + g.phone : '') + '</div>').join('');
+  const comments = loadComments();
+  document.getElementById('hostCommentList').innerHTML = comments.length === 0 ? '<div style="text-align:center;color:#999;">No messages yet</div>' : comments.map(c => '<div><span class="who">' + c.name + '</span><br>' + c.text + '</div>').join('');
+}
+function updateCommentList() {
+  const comments = loadComments();
+  document.getElementById('commentList').innerHTML = comments.length === 0 ? '<div style="text-align:center;color:#999;">No messages yet</div>' : comments.map(c => '<div><span class="who">' + c.name + '</span><br>' + c.text + '</div>').join('');
 }
 document.getElementById('rsvpForm').addEventListener('submit', function(e) {
   e.preventDefault();
@@ -82,24 +107,44 @@ document.getElementById('rsvpForm').addEventListener('submit', function(e) {
   saveRSVPs(list);
   document.getElementById('formMessage').innerHTML = '<div class="success">Thank you, ' + name + '! You are confirmed for ' + count + ' guest' + (count>1?'s':'') + '.<br><br>Your invitation is above.</div>';
   document.getElementById('rsvpForm').reset();
+  document.getElementById('commentSection').style.display = 'block';
+  document.getElementById('commentName').value = name;
+  updateCommentList();
   updateHostView();
+});
+document.getElementById('commentForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('commentName').value.trim();
+  const text = document.getElementById('commentText').value.trim();
+  if (!text) return;
+  const comments = loadComments();
+  comments.unshift({ name, text, time: new Date().toISOString() });
+  saveComments(comments);
+  document.getElementById('commentMessage').innerHTML = '<div class="success">Message posted!</div>';
+  document.getElementById('commentText').value = '';
+  updateCommentList();
+  updateHostView();
+  setTimeout(() => document.getElementById('commentMessage').innerHTML = '', 2000);
 });
 function toggleHost() {
   const pass = prompt('Enter host password:');
   if (pass === HOST_PASSWORD) {
     document.getElementById('hostSection').style.display = 'block';
     document.getElementById('rsvpSection').style.display = 'none';
+    document.getElementById('commentSection').style.display = 'none';
     updateHostView();
   } else if (pass !== null) { alert('Incorrect password'); }
 }
 function clearAll() {
-  if (confirm('Reset all RSVPs? This cannot be undone.')) {
-    localStorage.removeItem(STORAGE_KEY);
+  if (confirm('Reset all RSVPs and messages? This cannot be undone.')) {
+    localStorage.removeItem(RSVP_KEY);
+    localStorage.removeItem(COMMENT_KEY);
     updateHostView();
-    alert('All RSVPs cleared.');
+    alert('All data cleared.');
   }
 }
 updateHostView();
+updateCommentList();
 </script>
 </body>
 </html>
