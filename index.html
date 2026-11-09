@@ -9,47 +9,22 @@
   :root { --gold: #d4af37; --cream: #faf6f0; --deep: #1a2a3a; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Montserrat', sans-serif; background: linear-gradient(180deg, #87ceeb 0%, #f4a261 40%, #e76f51 70%, #2a9d8f 100%); min-height: 100vh; color: var(--deep); }
-  .invite-container { max-width: 480px; margin: 20px auto; background: linear-gradient(180deg, rgba(255,248,240,0.97) 0%, rgba(255,236,210,0.95) 100%); border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid rgba(212,175,55,0.4); }
-  header { text-align: center; padding: 40px 30px 20px; }
-  .together { font-size: 13px; letter-spacing: 4px; color: var(--gold); font-weight: 500; margin-bottom: 8px; }
-  .names { font-family: 'Playfair Display', serif; font-size: 52px; color: var(--gold); line-height: 1.1; }
-  .ampersand { font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 42px; color: var(--gold); }
-  .details { text-align: center; padding: 20px 30px; }
-  .details p { font-family: 'Cormorant Garamond', serif; font-size: 18px; margin: 8px 0; color: #4a3c2a; }
-  .date-box { display: flex; justify-content: center; align-items: center; gap: 15px; margin: 25px 0; font-weight: 500; }
-  .date-box .num { font-family: 'Playfair Display', serif; font-size: 48px; color: var(--gold); }
-  .venue { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-style: italic; color: var(--gold); margin: 10px 0 5px; }
-  .location { letter-spacing: 6px; font-size: 14px; color: #8b7355; }
-  .times { display: flex; justify-content: space-around; margin: 25px 0; font-size: 13px; }
-  .rsvp-section { background: rgba(255,255,255,0.6); margin: 20px; padding: 25px; border-radius: 16px; border: 1px solid rgba(212,175,55,0.3); }
+  .invite-container { max-width: 480px; margin: 20px auto; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid rgba(212,175,55,0.4); }
+  .invitation-img { width: 100%; display: block; }
+  .rsvp-section { background: rgba(255,255,255,0.95); margin: 0; padding: 25px; }
   h2 { font-family: 'Playfair Display', serif; text-align: center; color: var(--gold); margin-bottom: 15px; }
   label { display: block; margin: 12px 0 4px; font-size: 13px; }
   input, select { width: 100%; padding: 12px; border: 1px solid #e0d0b0; border-radius: 8px; font-size: 15px; }
   button { width: 100%; margin-top: 18px; padding: 14px; background: linear-gradient(135deg, var(--gold), #b8962e); color: white; border: none; border-radius: 30px; font-size: 15px; cursor: pointer; }
   .success { text-align: center; color: #2d6a4f; padding: 15px; background: #d8f3dc; border-radius: 8px; margin-top: 10px; }
-  footer { text-align: center; padding: 20px; font-size: 12px; color: #8b7355; }
+  footer { text-align: center; padding: 20px; font-size: 12px; color: #8b7355; background: #fff; }
 </style>
 </head>
 <body>
 <div class="invite-container">
-  <header>
-    <div class="together">TOGETHER WITH OUR FAMILIES</div>
-    <div class="names">Jessica</div>
-    <div class="ampersand">&</div>
-    <div class="names">Andre</div>
-  </header>
-  <div class="details">
-    <p>WE INVITE YOU TO CELEBRATE THE WEDDING OF</p>
-    <div class="date-box"><div>SUNDAY</div><div class="num">25</div><div>AT 4:00 PM</div></div>
-    <p>JULY, 2027</p>
-    <div class="venue">Sky Beach</div>
-    <div class="location">HANOVER</div>
-    <div class="times"><div>CEREMONY<br><strong>2:30 PM</strong></div><div>RECEPTION<br><strong>4:00 PM</strong></div></div>
-    <p style="font-size:14px; margin-top:15px;">KINDLY RSVP BY MARCH 15, 2027</p>
-    <p style="font-size:14px;">☎ 876-790-4431</p>
-  </div>
+  <img src="invitation.jpg" alt="Jessica & Andre Wedding Invitation" class="invitation-img">
   <div class="rsvp-section" id="rsvpSection">
-    <h2>RSVP</h2>
+    <h2>RSVP & Check-In</h2>
     <p style="text-align:center; font-size:14px; margin-bottom:15px;">Please confirm your attendance. Maximum 30 guests total.</p>
     <form id="rsvpForm">
       <label>Full Name</label>
@@ -80,7 +55,7 @@ document.getElementById('rsvpForm').addEventListener('submit', function(e) {
   if (list.some(g => g.name.toLowerCase() === name.toLowerCase())) { document.getElementById('formMessage').innerHTML = '<div style="color:#9b2226;text-align:center;margin-top:8px;">This name has already RSVP\'d.</div>'; return; }
   list.push({ name, count, phone, time: new Date().toISOString() });
   saveRSVPs(list);
-  document.getElementById('formMessage').innerHTML = '<div class="success">Thank you, ' + name + '! You are confirmed for ' + count + ' guest' + (count>1?'s':'') + '.</div>';
+  document.getElementById('formMessage').innerHTML = '<div class="success">Thank you, ' + name + '! You are confirmed for ' + count + ' guest' + (count>1?'s':'') + '.<br><br>Your invitation is above.</div>';
   document.getElementById('rsvpForm').reset();
 });
 </script>
