@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jessica & Andre | Wedding Invitation & RSVP</title>
+<title>Jesica & Andre | Wedding Invitation & RSVP</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root { --gold: #d4af37; --cream: #faf6f0; --deep: #1a2a3a; }
@@ -30,7 +30,7 @@
 </head>
 <body>
 <div class="invite-container">
-  <img src="invitation.jpg" alt="Jessica & Andre Wedding Invitation" class="invitation-img">
+  <img src="invitation.jpg" alt="Jesica & Andre Wedding Invitation" class="invitation-img">
   <div class="rsvp-section" id="rsvpSection">
     <h2>RSVP & Check-In</h2>
     <p style="text-align:center; font-size:14px; margin-bottom:15px;">Please confirm your attendance. Maximum 30 guests total.</p>
@@ -51,7 +51,7 @@
       <label>Your Name</label>
       <input type="text" id="commentName" required placeholder="Your name">
       <label>Message</label>
-      <textarea id="commentText" required placeholder="Write a note for Jessica & Andre..."></textarea>
+      <textarea id="commentText" required placeholder="Write a note for Jesica & Andre..."></textarea>
       <button type="submit">Post Message</button>
     </form>
     <div id="commentMessage"></div>
@@ -69,12 +69,12 @@
     <button onclick="clearAll()" style="background:#9b2226; margin-top:15px;">Reset All RSVPs & Messages</button>
   </div>
   <div class="host-toggle"><a href="#" onclick="toggleHost(); return false;">Host View</a></div>
-  <footer>Jessica & Andre • July 25, 2027 • Sky Beach, Hanover</footer>
+  <footer>Jesica & Andre • July 25, 2027 • Sky Beach, Hanover</footer>
 </div>
 <script>
 const MAX_GUESTS = 30;
-const RSVP_KEY = 'jessicaAndreWeddingRSVP';
-const COMMENT_KEY = 'jessicaAndreWeddingComments';
+const RSVP_KEY = 'jesicaAndreWeddingRSVP';
+const COMMENT_KEY = 'jesicaAndreWeddingComments';
 const HOST_PASSWORD = 'wedding2027';
 function loadRSVPs() { const d = localStorage.getItem(RSVP_KEY); return d ? JSON.parse(d) : []; }
 function saveRSVPs(list) { localStorage.setItem(RSVP_KEY, JSON.stringify(list)); }
