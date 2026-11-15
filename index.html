@@ -11,8 +11,9 @@
   body { font-family: 'Montserrat', sans-serif; background: linear-gradient(180deg, #87ceeb 0%, #f4a261 40%, #e76f51 70%, #2a9d8f 100%); min-height: 100vh; color: var(--deep); }
   .invite-container { max-width: 480px; margin: 20px auto; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid rgba(212,175,55,0.4); }
   .invitation-img { width: 100%; display: block; }
-  .rsvp-section, .host-section, .comment-section { background: rgba(255,255,255,0.95); margin: 0; padding: 25px; }
-  h2 { font-family: 'Playfair Display', serif; text-align: center; color: var(--gold); margin-bottom: 15px; }
+  .rsvp-section, .host-section, .comment-section, .menu-section { background: rgba(255,255,255,0.95); margin: 0; padding: 25px; }
+  h2 { font-family: 'Playfair Display', serif; text-align: center; color: var(--gold); margin-bottom: 12px; }
+  p.intro { text-align: center; font-size: 14px; margin-bottom: 16px; line-height: 1.45; color: #4a3c2a; }
   label { display: block; margin: 12px 0 4px; font-size: 13px; }
   input, select, textarea { width: 100%; padding: 12px; border: 1px solid #e0d0b0; border-radius: 8px; font-size: 15px; font-family: inherit; }
   textarea { min-height: 80px; resize: vertical; }
@@ -26,6 +27,10 @@
   footer { text-align: center; padding: 20px; font-size: 12px; color: #8b7355; background: #fff; }
   .host-toggle { text-align: center; margin: 15px 0; }
   .host-toggle a { color: var(--gold); font-size: 13px; text-decoration: none; border-bottom: 1px solid var(--gold); }
+  .dish-options { margin: 12px 0 8px; }
+  .dish-options label { display: flex; align-items: center; gap: 10px; margin: 10px 0; font-size: 15px; cursor: pointer; }
+  .dish-options input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--gold); }
+  .note { font-size: 12px; color: #8b7355; text-align: center; margin-top: 12px; line-height: 1.4; }
 </style>
 </head>
 <body>
@@ -33,7 +38,7 @@
   <img src="invitation.jpg" alt="Jesica & Andre Wedding Invitation" class="invitation-img">
   <div class="rsvp-section" id="rsvpSection">
     <h2>RSVP & Check-In</h2>
-    <p style="text-align:center; font-size:14px; margin-bottom:15px;">Please confirm your attendance. Maximum 30 guests total.</p>
+    <p class="intro">Please confirm your attendance. Maximum 30 guests total.</p>
     <form id="rsvpForm">
       <label>Full Name</label>
       <input type="text" id="guestName" required placeholder="Your full name">
@@ -44,6 +49,23 @@
       <button type="submit">Confirm Attendance</button>
     </form>
     <div id="formMessage"></div>
+  </div>
+  <div class="menu-section" id="menuSection" style="display:none;">
+    <h2>Help Us Plan Your Feast!</h2>
+    <p class="intro">We want to make sure there's something delicious for everyone! Please let us know which dishes you would most enjoy at our wedding reception.</p>
+    <p style="text-align:center; font-weight:500; margin-bottom:8px;">Which dishes would you prefer?</p>
+    <p style="text-align:center; font-size:13px; color:#8b7355; margin-bottom:12px;">Please select all that apply.</p>
+    <form id="menuForm">
+      <div class="dish-options">
+        <label><input type="checkbox" name="dish" value="Jerk Chicken"> Jerk Chicken</label>
+        <label><input type="checkbox" name="dish" value="Curry Goat"> Curry Goat</label>
+        <label><input type="checkbox" name="dish" value="Escovitch Fish"> Escovitch Fish</label>
+        <label><input type="checkbox" name="dish" value="Honey BBQ Chickpeas"> Honey BBQ Chickpeas</label>
+      </div>
+      <p class="note">Your selections are simply to help us plan our wedding menu. All meals will be served buffet-style on the day.</p>
+      <button type="submit">Save Preferences</button>
+    </form>
+    <div id="menuMessage"></div>
   </div>
   <div class="comment-section" id="commentSection" style="display:none;">
     <h2>Leave a Message</h2>
@@ -64,9 +86,11 @@
     <div id="spotsLeft" style="text-align:center; margin-bottom:15px;"></div>
     <h3 style="font-size:16px; margin:15px 0 8px;">Guest List</h3>
     <div class="guest-list" id="guestList"></div>
+    <h3 style="font-size:16px; margin:20px 0 8px;">Dish Preferences</h3>
+    <div class="guest-list" id="dishSummary"></div>
     <h3 style="font-size:16px; margin:20px 0 8px;">Messages</h3>
     <div class="comment-list" id="hostCommentList"></div>
-    <button onclick="clearAll()" style="background:#9b2226; margin-top:15px;">Reset All RSVPs & Messages</button>
+    <button onclick="clearAll()" style="background:#9b2226; margin-top:15px;">Reset All Data</button>
   </div>
   <div class="host-toggle"><a href="#" onclick="toggleHost(); return false;">Host View</a></div>
   <footer>Jesica & Andre • July 25, 2027 • Sky Beach, Hanover</footer>
@@ -75,11 +99,14 @@
 const MAX_GUESTS = 30;
 const RSVP_KEY = 'jesicaAndreWeddingRSVP';
 const COMMENT_KEY = 'jesicaAndreWeddingComments';
+const MENU_KEY = 'jesicaAndreWeddingMenu';
 const HOST_PASSWORD = 'wedding2027';
 function loadRSVPs() { const d = localStorage.getItem(RSVP_KEY); return d ? JSON.parse(d) : []; }
 function saveRSVPs(list) { localStorage.setItem(RSVP_KEY, JSON.stringify(list)); }
 function loadComments() { const d = localStorage.getItem(COMMENT_KEY); return d ? JSON.parse(d) : []; }
 function saveComments(list) { localStorage.setItem(COMMENT_KEY, JSON.stringify(list)); }
+function loadMenus() { const d = localStorage.getItem(MENU_KEY); return d ? JSON.parse(d) : []; }
+function saveMenus(list) { localStorage.setItem(MENU_KEY, JSON.stringify(list)); }
 function getTotal() { return loadRSVPs().reduce((sum, g) => sum + g.count, 0); }
 function updateHostView() {
   const list = loadRSVPs();
@@ -88,6 +115,15 @@ function updateHostView() {
   const left = MAX_GUESTS - total;
   document.getElementById('spotsLeft').innerHTML = left > 0 ? '<span style="color:#2d6a4f;">' + left + ' spots remaining</span>' : '<span style="color:#9b2226;">Event is full</span>';
   document.getElementById('guestList').innerHTML = list.length === 0 ? '<div style="text-align:center;color:#999;">No RSVPs yet</div>' : list.map(g => '<div><strong>' + g.name + '</strong> — ' + g.count + ' guest' + (g.count>1?'s':'') + (g.phone ? ' • ' + g.phone : '') + '</div>').join('');
+  const menus = loadMenus();
+  const counts = {};
+  menus.forEach(m => m.dishes.forEach(d => { counts[d] = (counts[d] || 0) + 1; }));
+  const dishOrder = ['Jerk Chicken', 'Curry Goat', 'Escovitch Fish', 'Honey BBQ Chickpeas'];
+  let dishHtml = dishOrder.map(d => '<div><strong>' + d + '</strong>: ' + (counts[d] || 0) + '</div>').join('');
+  if (menus.length) {
+    dishHtml += '<div style="margin-top:10px;font-size:12px;color:#8b7355;">By guest:</div>' + menus.map(m => '<div>' + m.name + ': ' + m.dishes.join(', ') + '</div>').join('');
+  }
+  document.getElementById('dishSummary').innerHTML = menus.length === 0 ? '<div style="text-align:center;color:#999;">No preferences yet</div>' : dishHtml;
   const comments = loadComments();
   document.getElementById('hostCommentList').innerHTML = comments.length === 0 ? '<div style="text-align:center;color:#999;">No messages yet</div>' : comments.map(c => '<div><span class="who">' + c.name + '</span><br>' + c.text + '</div>').join('');
 }
@@ -105,11 +141,28 @@ document.getElementById('rsvpForm').addEventListener('submit', function(e) {
   if (list.some(g => g.name.toLowerCase() === name.toLowerCase())) { document.getElementById('formMessage').innerHTML = '<div style="color:#9b2226;text-align:center;margin-top:8px;">This name has already RSVP\'d.</div>'; return; }
   list.push({ name, count, phone, time: new Date().toISOString() });
   saveRSVPs(list);
-  document.getElementById('formMessage').innerHTML = '<div class="success">Thank you, ' + name + '! You are confirmed for ' + count + ' guest' + (count>1?'s':'') + '.<br><br>Your invitation is above.</div>';
+  document.getElementById('formMessage').innerHTML = '<div class="success">Thank you, ' + name + '! You are confirmed for ' + count + ' guest' + (count>1?'s':'') + '.</div>';
   document.getElementById('rsvpForm').reset();
+  document.getElementById('menuSection').style.display = 'block';
   document.getElementById('commentSection').style.display = 'block';
   document.getElementById('commentName').value = name;
   updateCommentList();
+  updateHostView();
+});
+document.getElementById('menuForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const name = document.getElementById('guestName').value.trim() || document.getElementById('commentName').value.trim() || 'Guest';
+  const checked = Array.from(document.querySelectorAll('input[name="dish"]:checked')).map(c => c.value);
+  if (checked.length === 0) {
+    document.getElementById('menuMessage').innerHTML = '<div style="color:#9b2226;text-align:center;margin-top:8px;">Please select at least one dish.</div>';
+    return;
+  }
+  const menus = loadMenus();
+  const idx = menus.findIndex(m => m.name.toLowerCase() === name.toLowerCase());
+  if (idx >= 0) menus[idx] = { name, dishes: checked, time: new Date().toISOString() };
+  else menus.push({ name, dishes: checked, time: new Date().toISOString() });
+  saveMenus(menus);
+  document.getElementById('menuMessage').innerHTML = '<div class="success">Thank you! Your dish preferences have been saved.<br><br>Thank you for helping us make our celebration extra special!</div>';
   updateHostView();
 });
 document.getElementById('commentForm').addEventListener('submit', function(e) {
@@ -131,14 +184,16 @@ function toggleHost() {
   if (pass === HOST_PASSWORD) {
     document.getElementById('hostSection').style.display = 'block';
     document.getElementById('rsvpSection').style.display = 'none';
+    document.getElementById('menuSection').style.display = 'none';
     document.getElementById('commentSection').style.display = 'none';
     updateHostView();
   } else if (pass !== null) { alert('Incorrect password'); }
 }
 function clearAll() {
-  if (confirm('Reset all RSVPs and messages? This cannot be undone.')) {
+  if (confirm('Reset all RSVPs, menu preferences and messages? This cannot be undone.')) {
     localStorage.removeItem(RSVP_KEY);
     localStorage.removeItem(COMMENT_KEY);
+    localStorage.removeItem(MENU_KEY);
     updateHostView();
     alert('All data cleared.');
   }
