@@ -10,7 +10,21 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Montserrat', sans-serif; background: linear-gradient(180deg, #87ceeb 0%, #f4a261 40%, #e76f51 70%, #2a9d8f 100%); min-height: 100vh; color: var(--deep); }
   .invite-container { max-width: 480px; margin: 20px auto; background: #fff; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; border: 1px solid rgba(212,175,55,0.4); }
-  .invitation-img { width: 100%; display: block; }
+  .img-wrap { overflow: hidden; position: relative; }
+  .invitation-img {
+    width: 100%;
+    display: block;
+    transform-origin: center center;
+    animation: kenburns 18s ease-in-out infinite alternate, fadeIn 1.4s ease-out;
+  }
+  @keyframes kenburns {
+    0%   { transform: scale(1) translate(0, 0); }
+    100% { transform: scale(1.08) translate(-1.5%, -1%); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: scale(1.04); }
+    to   { opacity: 1; transform: scale(1); }
+  }
   .rsvp-section, .host-section, .comment-section, .menu-section { background: rgba(255,255,255,0.95); margin: 0; padding: 25px; }
   h2 { font-family: 'Playfair Display', serif; text-align: center; color: var(--gold); margin-bottom: 12px; }
   p.intro { text-align: center; font-size: 14px; margin-bottom: 16px; line-height: 1.45; color: #4a3c2a; }
@@ -35,7 +49,9 @@
 </head>
 <body>
 <div class="invite-container">
-  <img src="invitation.jpg" alt="Jesica & Andre Wedding Invitation" class="invitation-img">
+  <div class="img-wrap">
+    <img src="invitation.jpg" alt="Jesica & Andre Wedding Invitation" class="invitation-img">
+  </div>
   <div class="rsvp-section" id="rsvpSection">
     <h2>RSVP & Check-In</h2>
     <p class="intro">Please confirm your attendance. Maximum 30 guests total.</p>
