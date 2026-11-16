@@ -15,46 +15,23 @@
     position: relative;
     line-height: 0;
   }
-  .invitation-img { object-fit: cover;
+  .invitation-img {
     width: 100%;
     display: block;
-    transform-origin: 50% 70%; /* focus motion toward ocean/lower area */
-    animation: oceanFocus 14s ease-in-out infinite alternate, softSway 9s ease-in-out infinite alternate, fadeIn 1.6s ease-out;
+    object-fit: cover;
   }
-  /* Stronger motion that feels like waves + leaves */
-  @keyframes oceanFocus {
-    0%   { transform: scale(1) translate(0%, 0%); }
-    40%  { transform: scale(1.06) translate(-1.2%, 0.8%); }
+  40%  { transform: scale(1.06) translate(-1.2%, 0.8%); }
     70%  { transform: scale(1.09) translate(0.8%, -0.6%); }
     100% { transform: scale(1.05) translate(-0.6%, 1.1%); }
   }
-  @keyframes softSway {
-    0%   { filter: brightness(1); }
-    50%  { filter: brightness(1.04); }
+  50%  { filter: brightness(1.04); }
     100% { filter: brightness(1); }
   }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(1.05); }
-    to   { opacity: 1; transform: scale(1); }
+  to   { opacity: 1; transform: scale(1); }
   }
   /* Optional shimmer overlay for water feel */
-  .img-wrap::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      120deg,
-      transparent 30%,
-      rgba(255,255,255,0.08) 45%,
-      transparent 60%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 7s linear infinite;
-    pointer-events: none;
-    mix-blend-mode: soft-light;
-  }
-  @keyframes shimmer {
-    0%   { background-position: 100% 0; }
+  
+  
     100% { background-position: -100% 0; }
   }
   .rsvp-section, .host-section, .comment-section, .menu-section { background: rgba(255,255,255,0.95); margin: 0; padding: 25px; }
