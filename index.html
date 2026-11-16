@@ -15,7 +15,7 @@
     position: relative;
     line-height: 0;
   }
-  .invitation-img {
+  .invitation-img { object-fit: cover;
     width: 100%;
     display: block;
     transform-origin: 50% 70%; /* focus motion toward ocean/lower area */
@@ -82,7 +82,9 @@
 <body>
 <div class="invite-container">
   <div class="img-wrap">
-    <img src="invitation.jpg" alt="Jesica & Andre Wedding Invitation" class="invitation-img">
+    <video class="invitation-img" autoplay muted loop playsinline>
+      <source src="invitation_loop.mp4" type="video/mp4">
+    </video>
   </div>
   <div class="rsvp-section" id="rsvpSection">
     <h2>RSVP & Check-In</h2>
