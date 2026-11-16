@@ -69,8 +69,16 @@
     <form id="rsvpForm">
       <label>Full Name</label>
       <input type="text" id="guestName" required placeholder="Your full name">
-      <label>Number of Guests (including yourself)</label>
-      <select id="guestCount"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+      <label>Attending as</label>
+      <select id="attendingAs" onchange="updateGuestCount()">
+        <option value="single">Single (1 person)</option>
+        <option value="couple">Couple (2 people)</option>
+        <option value="other">Other</option>
+      </select>
+      <div id="otherCountWrap" style="display:none;">
+        <label>Number of Guests (including yourself)</label>
+        <select id="guestCount"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
+      </div>
       <label>Phone (optional)</label>
       <input type="tel" id="guestPhone" placeholder="Your phone number">
       <button type="submit">Confirm Attendance</button>
@@ -141,7 +149,10 @@ function updateHostView() {
   document.getElementById('totalAttending').textContent = total;
   const left = MAX_GUESTS - total;
   document.getElementById('spotsLeft').innerHTML = left > 0 ? '<span style="color:#2d6a4f;">' + left + ' spots remaining</span>' : '<span style="color:#9b2226;">Event is full</span>';
-  document.getElementById('guestList').innerHTML = list.length === 0 ? '<div style="text-align:center;color:#999;">No RSVPs yet</div>' : list.map(g => '<div><strong>' + g.name + '</strong> — ' + g.count + ' guest' + (g.count>1?'s':'') + (g.phone ? ' • ' + g.phone : '') + '</div>').join('');
+  document.getElementById('guestList').innerHTML = list.length === 0 ? '<div style="text-align:center;color:#999;">No RSVPs yet</div>' : list.map(g => {
+  const type = g.count === 1 ? 'Single' : g.count === 2 ? 'Couple' : g.count + ' guests';
+  return '<div><strong>' + g.name + '</strong> — ' + type + (g.phone ? ' • ' + g.phone : '') + '</div>';
+}).join('');
   const menus = loadMenus();
   const counts = {};
   menus.forEach(m => m.dishes.forEach(d => { counts[d] = (counts[d] || 0) + 1; }));
